@@ -14,7 +14,7 @@ services:
       - ./logs:/usr/local/src/server/logs
     ports:
       - "3004:3000"
-    command: ["/bin/sh", "-c", "ls && npm install && npm run start:prod"]
+    command: ["/bin/sh", "-c", "ls && npm run start"]
 networks:
   ff-send:
     driver: bridge
