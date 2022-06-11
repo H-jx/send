@@ -6,7 +6,7 @@ services:
     ports:
       - 27125:6379
   nodejs:
-    image: node:16.3.1
+    image: node:16
     container_name: ff-send-server
     working_dir: /usr/local/src/server
     volumes:
