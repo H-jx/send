@@ -1,0 +1,31 @@
+.cover {
+    height: 100%;
+
+    &-tip {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(123, 121, 121, 0.2);
+        border-radius: 10px;
+        border: dashed 1px #000;
+    }
+    &.dragover &-tip{
+        display: block;
+    }
+    &-tipText{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: #111;
+        font-size: 20px;
+        font-weight: 600;
+    }
+}
+
+.hide{
+    display: none;
+}

@@ -1,0 +1,49 @@
+import { Message } from 'src/lib/interface'
+import { redis } from '../db/redis'
+const roomPrefix = 'room-'
+const oneDay = 86400000
+
+export async function getRoom(roomId?: string) {
+  const key = `${roomPrefix}${roomId}`
+  const room = await redis.get(key)
+  return room
+}
+
+export async function createRoom(roomId: string) {
+  const key = `${roomPrefix}${roomId}`
+  await redis.set(key, '[]')
+  await redis.expire(key, oneDay)
+}
+
+export async function getRoomMessageList(roomId: string): Promise<Message[]> {
+  const roomMessageListString = await getRoom(roomId)
+  if (roomMessageListString == null) {
+    throw Error(`房间号${roomId}不存在或者过期`)
+  }
+  return JSON.parse(roomMessageListString)
+}
+
+export async function pushMessage(roomId: string, message: Message) {
+  const roomMessageListString = await getRoom(roomId)
+  const key = `${roomPrefix}${roomId}`
+  if (roomMessageListString == null) {
+    throw Error(`房间号${roomId}不存在或者过期`)
+  }
+  const msg: Message = {
+    id: message.id,
+    type: message.type,
+    time: message.time,
+  }
+  if (message.file) {
+    msg.file = message.file
+    msg.url = message.url
+  } else {
+    msg.text = message.text
+  }
+
+  const list = JSON.parse(roomMessageListString)
+  list.push(msg)
+  await redis.set(key, JSON.stringify(list))
+  await redis.expire(key, oneDay)
+  return msg
+}

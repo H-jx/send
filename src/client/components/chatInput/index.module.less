@@ -1,0 +1,38 @@
+.chat-input {
+    height: 60px;
+    background-color: white;
+    display: flex;
+    justify-content: flex-end;
+    position:absolute;
+    bottom: 0;
+    width: 100%;
+    @media screen and (max-width: 920px) {
+        position: fixed;
+    }
+    &-upload {
+        overflow: hidden;
+        height: 0;
+        width: 0;
+    }
+
+    &-plus {
+        font-size: 40px;
+        line-height: 60px;
+        margin-right: 16px;
+    }
+
+    &-text {
+        width: 100%;
+        border: 0;
+        font-size: 20px;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top:6px;
+        resize: none;
+        &:focus {
+            border: none;
+            outline: none;
+        }
+    }
+
+}

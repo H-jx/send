@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+      "allowSyntheticDefaultImports": true,
+      "declaration": true,
+      "experimentalDecorators": true,
+      "esModuleInterop": true,
+      "moduleResolution": "node",
+      "module": "commonjs",
+      "jsx": "react-jsx",
+      "strict": true,
+      "skipLibCheck": true,
+      "target": "es2015",
+      "resolveJsonModule": true,
+      "baseUrl": ".",
+      "rootDir": "src",
+      "outDir": "dist",
+      "paths": {
+        "src/*": ["src/*"],
+      },
+      "typeRoots": ["./node_modules/@types", "./typings"],
+      "plugins": [
+        {
+          "name": "typescript-plugin-css-modules",
+          "options": {
+            "customMatcher": "\\.module\\.less$",
+            "classnameTransform": "camelCase"
+          }
+        }
+      ],
+    },
+    "include": [
+      "src/**/*",
+      "typings/*.ts",
+    ],
+    "exclude": [
+      "dist",
+      "node_modules",
+      "test"
+    ]
+  }

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compileOnSave": true,
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "noImplicitThis": true,
+    "stripInternal": true,
+    "pretty": true,
+    "outDir": "dist/server",
+  }
+}

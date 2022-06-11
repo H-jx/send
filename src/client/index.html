@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <link rel="shortcut icon" href="./favicon.ico" />
+    <title>Send</title>
+    <script>
+        if (window.location.search.includes('console')) {
+            var oHead = document.getElementsByTagName('HEAD').item(0);
+            var oScript= document.createElement("script");
+            oScript.type = "text/javascript";
+            oScript.src="https://cdn.bootcdn.net/ajax/libs/vConsole/3.13.0/vconsole.min.js";
+            oHead.appendChild( oScript);
+
+            window.addEventListener('load', function() {
+                var vConsole = new window.VConsole();
+            })
+        }
+    </script>
+    <script>
+        window.addEventListener('error', function() {
+            console.log(err.message)
+        })
+    </script>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+     html,body{
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<body>
+    <div style="height: 100%;width: 100%;" id="app"></div>
+</body>
+<script type="module" src="./index.tsx"></script>
+</html>

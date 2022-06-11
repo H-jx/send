@@ -1,0 +1,15 @@
+{
+    "appId": "FFSend",
+    "client": {
+        "apps": {
+            "local": "127.0.0.1:3000"
+        },
+        "genRPCDefintionTarget": "./lib"
+    },
+    "server": {
+        "scanDir": [
+            "./server/controller/**/*.ts"
+        ],
+        "metaOutDir": "./"
+    }
+}

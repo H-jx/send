@@ -1,0 +1,72 @@
+@import '~/src/client/assets/style/mixin.less';
+
+.entryBody {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  .container {
+    display: flex;
+    margin-top: -10%;
+    min-height: 140px;
+    margin: 0 auto;
+  }
+  
+  @media screen and (max-width: 920px) {
+    &-right {
+      display: none;
+    }
+    &-left {
+      justify-content: center;
+    }
+    &-container{
+      flex-grow: 1;
+    }
+  }
+
+  &-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 200px;
+  }
+  &-right {
+    margin-left: 200px;
+    width: 700px;
+    height: 400px;
+    background: white;
+    align-self: center;
+  }
+
+  .button:extend(.boxShadow) {
+    //不要删
+  } 
+  .receiveBox {
+    position: relative;
+    margin-top: 80px;
+
+  }
+  .codeModel{
+    .receiveInput{
+      width: 100%;
+      opacity: 1;
+    }
+  }
+  
+  .receiveInput{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 0;
+    height: 100%;
+    border: 4px solid #CCC;
+    border-radius: 1000px;
+    background-color: #FFF;
+    padding: 4px 8px 4px 18px;
+    opacity: 0;
+    transition: width 0.1s linear;
+  }
+  .video:extend(.boxShadow){
+    max-width: 100%;
+  }
+}
