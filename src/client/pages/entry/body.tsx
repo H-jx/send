@@ -87,11 +87,11 @@ export const Body = () => {
         {!isMobile() && (
           <video
             className={style.video}
-            src="//activity.hdslb.com/blackboard/static/1d5c9c63ddd602617ed9a6ec73bebe8f/example.mp4"
+            src="//minio.8and1.cn/static/send/example.mp4"
             autoPlay
             loop
             muted
-            poster="//activity.hdslb.com/blackboard/static/1d5c9c63ddd602617ed9a6ec73bebe8f/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20220315122914.png"
+            poster="//minio.8and1.cn/static/send/poster.png"
           ></video>
         )}
       </div>

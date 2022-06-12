@@ -8,12 +8,12 @@
     "theme_color": "#3ABDFA",
     "icons": [
       {
-        "src": "//i0.hdslb.com/bfs/activity-plat/static/1d5c9c63ddd602617ed9a6ec73bebe8f/ff-send-logo.png",
+        "src": "//minio.8and1.cn/static/send/ff-send-logo.png",
         "sizes": "144x144",
         "type": "image/png"
       },
       {
-        "src": "//i0.hdslb.com/bfs/activity-plat/static/1d5c9c63ddd602617ed9a6ec73bebe8f/ff-send-logo@3x.png",
+        "src": "//minio.8and1.cn/static/send/ff-send-logo@3x.png",
         "sizes": "432x432",
         "type": "image/png"
       }
