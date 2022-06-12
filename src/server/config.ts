@@ -8,7 +8,7 @@ const defaultConfig = {
     port: 27125,
   },
   minio: {
-    bucket: 'static',
+    bucket: 'send',
     endpoint: 'minio.8and1.cn',
     accessKeyId: 'wxnAz7zmiClAXlqJ',
     secretAccessKey: 'R1zYDiyFLK0wWNf3ZTZzIwgEiavbyCWN',

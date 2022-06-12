@@ -1,7 +1,7 @@
 import { Message } from 'src/lib/interface'
 import { redis } from '../db/redis'
 const roomPrefix = 'room-'
-const oneDay = 86400000
+const sevenDay = 86400000 * 7
 
 export async function getRoom(roomId?: string) {
   const key = `${roomPrefix}${roomId}`
@@ -12,7 +12,7 @@ export async function getRoom(roomId?: string) {
 export async function createRoom(roomId: string) {
   const key = `${roomPrefix}${roomId}`
   await redis.set(key, '[]')
-  await redis.expire(key, oneDay)
+  await redis.expire(key, sevenDay)
 }
 
 export async function getRoomMessageList(roomId: string): Promise<Message[]> {
@@ -44,6 +44,6 @@ export async function pushMessage(roomId: string, message: Message) {
   const list = JSON.parse(roomMessageListString)
   list.push(msg)
   await redis.set(key, JSON.stringify(list))
-  await redis.expire(key, oneDay)
+  await redis.expire(key, sevenDay)
   return msg
 }

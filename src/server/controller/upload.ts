@@ -15,7 +15,7 @@ const minioClient = new Client({
   accessKey: bossConfig.accessKeyId,
   secretKey: bossConfig.secretAccessKey,
 })
-const signedUrlExpireSeconds = 60 * 10
+const signedUrlExpireSeconds = 86400000 * 1
 
 @RPCService()
 export class Upload {
@@ -34,7 +34,7 @@ export class Upload {
     const isHttps = this.ctx.header['referer']?.includes('https')
     if (query.md5) {
       try {
-        const downloadURL = await minioClient.presignedPutObject(params.Bucket, params.Key)
+        const downloadURL = await minioClient.presignedPutObject(params.Bucket, params.Key, params.Expires)
         return successJSON({ data: { download: downloadURL } })
         // 获取下载链接
       } catch (error) {

@@ -36,7 +36,6 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
     handshake.query.roomId == undefined || Array.isArray(handshake.query.roomId) ? '' : handshake.query.roomId
 
   const username = handshake.query?.username as string | undefined
-  logger.info(`socket connected: ${currentRoomId}`, username)
 
   // 记录用户数据
   if (username) {
@@ -59,7 +58,6 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
       return
     }
     const sockets = await ioServer.in(roomId).fetchSockets()
-    logger.info('sockets len:', sockets.length)
     for (const s of sockets) {
       if (s.id === socket.id) {
         continue
@@ -72,18 +70,6 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
     socket.leave(currentRoomId)
     // delete socketsMap[socket.id]
     logger.info(`socket disconnect: ${socket.id} ${reason}`)
-
-    // 删除记录当前存活的房间号(没人使用的时候操作)
-    const allSockets = await ioServer?.fetchSockets()
-    if (allSockets && allSockets.length === 0) {
-      const roomIds = await getCurrentRoomts()
-      roomIds.forEach(async (id) => {
-        const room = await getRoom(id)
-        if (!room) {
-          removeRoomKey(id)
-        }
-      })
-    }
   })
 
   socket.on(SOCKET_EVENT_MAP.MSG_SEND, async (message: Message, callback) => {
