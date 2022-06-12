@@ -4,7 +4,7 @@ import * as fs from 'fs'
 const configPath = '/data/conf/paladin/config.json'
 const defaultConfig = {
   redis: {
-    host: '10.130.41.30',
+    host: '192.168.0.1',
     port: 27125,
   },
   minio: {
