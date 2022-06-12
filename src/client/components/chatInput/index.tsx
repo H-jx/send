@@ -33,6 +33,7 @@ export const ChatInput: FC<{ onSendChange: onSendChangeType }> = (props) => {
     setSend(Boolean(textRef.current?.value.length))
   }
   const triggerUpload = () => {
+    console.log(fileUploadRef.current)
     fileUploadRef.current?.click()
   }
   const fileInputOnchange = () => {
