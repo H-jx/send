@@ -89,6 +89,7 @@ export const ChatInput: FC<{ onSendChange: onSendChangeType }> = (props) => {
         className={style.chatInputUpload}
         type="file"
         accept="*"
+        multiple
       />
       {showSend && (
         <Button onClick={send} style={{ whiteSpace: 'nowrap' }} color="primary">
