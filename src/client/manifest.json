@@ -1,7 +1,7 @@
 
 {
-    "name": "ff-send",
-    "short_name": "ff-send",
+    "name": "send",
+    "short_name": "send",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#fff",
