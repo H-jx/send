@@ -64,7 +64,7 @@ export const useSocket = (url: string, roomId: string) => {
   useEffect(() => {
     actions.socketStatusChange('connecting')
     socket.current = io(`//${url}`, {
-      // transports: ['websocket'],
+      transports: ['websocket'],
       query: {
         roomId,
         username: getCookie('username'),
