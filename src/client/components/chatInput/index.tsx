@@ -34,7 +34,7 @@ export const ChatInput: FC<{ onSendChange: onSendChangeType }> = (props) => {
   }
   const triggerUpload = () => {
     console.log(fileUploadRef.current)
-    fileUploadRef.current?.focus()
+    fileUploadRef.current?.click()
   }
   const fileInputOnchange = () => {
     if (!fileUploadRef.current) return
@@ -83,7 +83,13 @@ export const ChatInput: FC<{ onSendChange: onSendChangeType }> = (props) => {
       <span className={style.chatInputPlus}>
         <AddCircleOutline onClick={triggerUpload} />
       </span>
-      <input onChange={fileInputOnchange} ref={fileUploadRef} className={style.chatInputUpload} type="file" />
+      <input
+        onChange={fileInputOnchange}
+        ref={fileUploadRef}
+        className={style.chatInputUpload}
+        type="file"
+        accept="*"
+      />
       {showSend && (
         <Button onClick={send} style={{ whiteSpace: 'nowrap' }} color="primary">
           发送
