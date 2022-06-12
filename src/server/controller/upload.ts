@@ -31,6 +31,7 @@ export class Upload {
       Key: `${query.md5 ?? uuidv4()}/${query.fileName}`,
       Expires: signedUrlExpireSeconds,
     }
+    const isHttps = this.ctx.header['referer']?.includes('https')
     if (query.md5) {
       try {
         const downloadURL = await minioClient.presignedPutObject(params.Bucket, params.Key)
@@ -42,17 +43,17 @@ export class Upload {
       }
     }
     try {
-      const [upload, download] = await Promise.all([
+      let [upload, download] = await Promise.all([
         minioClient.presignedPutObject(params.Bucket, params.Key),
         minioClient.presignedGetObject(params.Bucket, params.Key),
       ])
 
       // const configReplace = await redis.get('test-replace')
 
-      // if (isHttps && tests3 == 'true') {
-      //   upload = upload.replace(/https?:/, '')
-      //   download = download.replace(/https?:/, '')
-      // }
+      if (isHttps) {
+        upload = upload.replace(/https?:/, '')
+        download = download.replace(/https?:/, '')
+      }
       return successJSON({ data: { upload: upload, download: download } })
     } catch (error) {
       logger.error(error)
