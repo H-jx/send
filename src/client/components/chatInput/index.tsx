@@ -34,7 +34,7 @@ export const ChatInput: FC<{ onSendChange: onSendChangeType }> = (props) => {
   }
   const triggerUpload = () => {
     console.log(fileUploadRef.current)
-    fileUploadRef.current?.click()
+    fileUploadRef.current?.focus()
   }
   const fileInputOnchange = () => {
     if (!fileUploadRef.current) return
