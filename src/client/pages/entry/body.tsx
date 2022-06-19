@@ -82,6 +82,19 @@ export const Body = () => {
             value={code}
           ></Input>
         </div>
+
+        <Button
+          className={style.button}
+          onClick={() => {
+            navigator(`./data`)
+          }}
+          size="large"
+          block
+          shape="rounded"
+          color="default"
+        >
+          历史房间
+        </Button>
       </div>
       <div className={style.entryBodyRight}>
         {!isMobile() && (
