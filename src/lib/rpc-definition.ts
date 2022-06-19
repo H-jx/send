@@ -1,10 +1,10 @@
-
 /* eslint-disable */
 export namespace FFSendNS {
     export interface App {
         Room: Room;
         Upload: Upload;
         Ping: Ping;
+        Statistics: Statistics;
     }
 
     interface Room {
@@ -28,6 +28,11 @@ export namespace FFSendNS {
 
     interface Ping {
         ping(): Promise<ResponseBody<unknown>>;
+    }
+
+    interface Statistics {
+        getCurrentRoomts(): Promise<ResponseBody<string[]>>;
+        getUserList(): Promise<ResponseBody<string[]>>;
     }
 }
 

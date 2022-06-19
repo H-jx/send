@@ -2,7 +2,7 @@
     "appId": "FFSend",
     "client": {
         "apps": {
-            "local": "127.0.0.1:3000"
+            "local": "127.0.0.1:3000/api"
         },
         "genRPCDefintionTarget": "./lib"
     },

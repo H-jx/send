@@ -39,7 +39,7 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
 
   // 记录用户数据
   if (username) {
-    recordUser(handshake.query?.username as string)
+    // recordUser(handshake.query?.username as string)
   }
   // 记录房间数据
   recordRoomKey(currentRoomId)
