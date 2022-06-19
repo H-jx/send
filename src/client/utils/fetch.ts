@@ -7,4 +7,4 @@ export const rpc = createRemoteService<FFSend>({
   baseUrl: `//${url}`,
 })
 
-export const BaseUrl = url
+export const BaseUrl = url.replace('/api', '')
