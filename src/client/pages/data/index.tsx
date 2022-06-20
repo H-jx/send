@@ -27,7 +27,7 @@ export function Data() {
           {rooms.map((id: string) => {
             return (
               <li key={id}>
-                <Link to={`/room?roomId=${id}`}></Link>
+                <Link to={`/room?roomId=${id}`}>{id}</Link>
               </li>
             )
           })}
