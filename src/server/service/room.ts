@@ -1,7 +1,7 @@
 import { Message } from 'src/lib/interface'
 import { redis } from '../db/redis'
 const roomPrefix = 'room-'
-const sevenDay = 86400000 * 7
+const sevenDay = 86400 * 7
 
 export async function getRoom(roomId?: string) {
   const key = `${roomPrefix}${roomId}`
