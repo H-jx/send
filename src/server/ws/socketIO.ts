@@ -2,7 +2,7 @@ import http from 'http'
 import io from 'socket.io'
 import { logger } from 'src/server/common/logger'
 import { Message, SocketHandler, SocketEvents, SOCKET_EVENT_MAP } from 'src/lib/interface'
-import { getRoom, getRoomMessageList, pushMessage, removeRoom } from '../service/room'
+import { getRoom, getRoomMessageList, getRoomTll, pushMessage, removeRoom } from '../service/room'
 import { recordUser, recordRoomKey, getCurrentRoomts, removeRoomKey } from '../service/statistics'
 
 // const socketsMap: Record<string, io.Socket> = {}
@@ -81,6 +81,8 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
 
       roomIds.forEach(async (id) => {
         const room = await getRoom(id)
+        const t = await getRoomTll(id)
+        console.log(`${roomIds}: ${t}`)
         const msgList = await getRoomMessageList(id)
         if (!room || msgList.length === 0) {
           removeRoomKey(id)

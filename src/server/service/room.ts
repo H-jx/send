@@ -8,7 +8,11 @@ export async function getRoom(roomId?: string) {
   const room = await redis.get(key)
   return room
 }
-
+export async function getRoomTll(roomId?: string) {
+  const key = `${roomPrefix}${roomId}`
+  const t = await redis.ttl(key)
+  return t
+}
 export async function createRoom(roomId: string) {
   const key = `${roomPrefix}${roomId}`
   await redis.set(key, '[]')
