@@ -2,7 +2,7 @@ import http from 'http'
 import io from 'socket.io'
 import { logger } from 'src/server/common/logger'
 import { Message, SocketHandler, SocketEvents, SOCKET_EVENT_MAP } from 'src/lib/interface'
-import { getRoom, getRoomMessageList, pushMessage } from '../service/room'
+import { getRoom, getRoomMessageList, pushMessage, removeRoom } from '../service/room'
 import { recordUser, recordRoomKey, getCurrentRoomts, removeRoomKey } from '../service/statistics'
 
 // const socketsMap: Record<string, io.Socket> = {}
@@ -73,12 +73,18 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
 
     // 删除记录当前存活的房间号(没人使用的时候操作)
     const allSockets = await ioServer?.fetchSockets()
+
+    logger.info(`allSockets.length: ${allSockets?.length}`)
+
     if (allSockets && allSockets.length === 0) {
       const roomIds = await getCurrentRoomts()
+
       roomIds.forEach(async (id) => {
         const room = await getRoom(id)
-        if (!room) {
+        const msgList = await getRoomMessageList(id)
+        if (!room || msgList.length === 0) {
           removeRoomKey(id)
+          removeRoom(id)
         }
       })
     }

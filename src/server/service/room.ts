@@ -14,6 +14,10 @@ export async function createRoom(roomId: string) {
   await redis.set(key, '[]')
   await redis.expire(key, sevenDay)
 }
+export async function removeRoom(roomId: string) {
+  const key = `${roomPrefix}${roomId}`
+  await redis.del(key)
+}
 
 export async function getRoomMessageList(roomId: string): Promise<Message[]> {
   const roomMessageListString = await getRoom(roomId)
