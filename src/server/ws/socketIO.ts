@@ -82,7 +82,7 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
       roomIds.forEach(async (id) => {
         const room = await getRoom(id)
         const t = await getRoomTll(id)
-        console.log(`${roomIds}: ${t}`)
+        console.log(`${id}: ${t}`)
         const msgList = await getRoomMessageList(id)
         if (!room || msgList.length === 0) {
           removeRoomKey(id)
