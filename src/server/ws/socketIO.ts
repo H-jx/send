@@ -84,6 +84,8 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
         const t = await getRoomTll(id)
         console.log(`${id}: ${t}`)
         const msgList = await getRoomMessageList(id)
+        removeRoomKey(id)
+        removeRoom(id)
         if (!room || msgList.length === 0) {
           removeRoomKey(id)
           removeRoom(id)
