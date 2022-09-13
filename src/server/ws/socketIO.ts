@@ -76,7 +76,7 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
 
     logger.info(`allSockets.length: ${allSockets?.length}`)
 
-    if (allSockets && allSockets.length === 0) {
+    if (allSockets && allSockets.length < 3) {
       const roomIds = await getCurrentRoomts()
 
       roomIds.forEach(async (id) => {
