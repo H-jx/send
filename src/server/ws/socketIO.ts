@@ -84,12 +84,16 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
           const room = await getRoom(id)
           const t = await getRoomTll(id)
           console.log(`${id}: ${t / 24 / 60 / 60}`)
-        } catch (error) {
-          const msgList = await getRoomMessageList(id)
           if (!room || msgList.length === 0) {
             removeRoomKey(id)
             removeRoom(id)
           }
+          const msgList = await getRoomMessageList(id)
+          if (msgList.length === 0) {
+            removeRoomKey(id)
+            removeRoom(id)
+          }
+        } catch (error) {
           console.error(error)
         }
       })
