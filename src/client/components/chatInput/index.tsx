@@ -38,10 +38,11 @@ export const ChatInput: FC<{ onSendChange: onSendChangeType }> = (props) => {
   }
   const fileInputOnchange = () => {
     if (!fileUploadRef.current) return
-    const file = fileUploadRef.current.files?.[0]
-    console.log(fileUploadRef.current.files)
-    if (file == null) return
-    props.onSendChange('file', file)
+    if (fileUploadRef.current.files == null) return
+    for (let i = 0; i < fileUploadRef.current.files.length; i++) {
+      const file = fileUploadRef.current.files[i]
+      props.onSendChange('file', file)
+    }
     fileUploadRef.current!.value = ''
   }
   const send = () => {
@@ -70,7 +71,7 @@ export const ChatInput: FC<{ onSendChange: onSendChangeType }> = (props) => {
     const fileUrl = URL.createObjectURL(blob)
 
     Dialog.confirm({
-      content: <Image fit="contain" src={fileUrl} />,
+      content: <Image fit="contain" src={fileUrl} width={'50%'} height={'50%'} />,
     }).then((bool) => {
       if (bool) {
         props.onSendChange('file', blob)

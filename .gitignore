@@ -11,3 +11,4 @@ yarn-error.log*
 package.deploy.json
 _rpc_gen_meta_.json
 .idea
+config.json
