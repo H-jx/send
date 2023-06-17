@@ -1,6 +1,6 @@
 import { Context } from 'koa'
 import { RPCMethod, RPCService } from 'ts-brpc/server'
-import { logger } from '../common/logger'
+import { outLogger } from '../common/logger'
 import { errorJSON, successJSON } from '../common/response'
 import { ResponseBody } from '../interface/Http'
 import { createRoom, getRoom } from '../service/room'
@@ -30,7 +30,7 @@ export class Room {
       }
       return successJSON({ data: { roomId: id } })
     } catch (error) {
-      logger.error(error)
+      outLogger.error(error)
       return errorJSON({ message: (error as Error).message })
     }
   }
@@ -48,7 +48,7 @@ export class Room {
       }
       return successJSON({ data: JSON.parse(room) })
     } catch (error) {
-      logger.error(error)
+      outLogger.error(error)
       return errorJSON()
     }
   }

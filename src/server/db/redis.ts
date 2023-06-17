@@ -1,5 +1,5 @@
 import Redis from 'ioredis'
-import { logger } from 'src/server/common/logger'
+import { outLogger } from 'src/server/common/logger'
 import { redisConfig } from '../config'
 
 export const redis = new Redis({
@@ -10,8 +10,8 @@ export const redis = new Redis({
 redis
   .get('foo')
   .then(function (result) {
-    logger.info(`redis ready`)
+    outLogger.info(`redis ready`)
   })
   .catch((err) => {
-    logger.error(err)
+    outLogger.error(err)
   })

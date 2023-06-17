@@ -1,6 +1,6 @@
 import http from 'http'
 import io from 'socket.io'
-import { logger } from 'src/server/common/logger'
+import { outLogger } from 'src/server/common/logger'
 import { Message, SocketHandler, SocketEvents, SOCKET_EVENT_MAP } from 'src/lib/interface'
 import { getRoom, getRoomMessageList, getRoomTll, pushMessage, removeRoom } from '../service/room'
 import { recordUser, recordRoomKey, getCurrentRoomts, removeRoomKey } from '../service/statistics'
@@ -54,7 +54,7 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
 
   async function roomBroadcast(event: SocketEvents, roomId: string, ...arg: Parameters<SocketHandler[SocketEvents]>) {
     if (!ioServer) {
-      logger.error('socket.io is not ready')
+      outLogger.error('socket.io is not ready')
       return
     }
     const sockets = await ioServer.in(roomId).fetchSockets()
@@ -69,12 +69,12 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
   socket.on('disconnect', async (reason) => {
     socket.leave(currentRoomId)
     // delete socketsMap[socket.id]
-    logger.info(`socket disconnect: ${socket.id} ${reason}`)
+    outLogger.info(`socket disconnect: ${socket.id} ${reason}`)
 
     // 删除记录当前存活的房间号(没人使用的时候操作)
     const allSockets = await ioServer?.fetchSockets()
 
-    logger.info(`allSockets.length: ${allSockets?.length}`)
+    outLogger.info(`allSockets.length: ${allSockets?.length}`)
 
     if (allSockets && allSockets.length < 3) {
       const roomIds = await getCurrentRoomts()
@@ -112,7 +112,7 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
     }
     message.sendBy = username as string
 
-    logger.info('on MSG_SEND', socket.id, '-', currentRoomId, '-', message)
+    outLogger.info('on MSG_SEND', socket.id, '-', currentRoomId, '-', message)
     try {
       const room = await pushMessage(currentRoomId, message)
       response.success = Boolean(room)
@@ -120,7 +120,7 @@ async function handleSocket(socket: io.Socket<SocketHandler>) {
     } catch (error) {
       response.success = false
       response.message = (error as Error).message
-      logger.error('MSG_SEND', error)
+      outLogger.error('MSG_SEND', error)
     }
 
     if (callback) {

@@ -8,7 +8,7 @@ import koaBody from 'koa-body'
 import { bindKoa } from 'ts-brpc/server'
 import historyApiFallback from 'koa2-connect-history-api-fallback'
 import { logger as loggerMiddleware } from './middleware'
-import { logger } from 'src/server/common/logger'
+import { outLogger } from 'src/server/common/logger'
 import { attach } from 'src/server/ws/socketIO'
 import { getIPAdress } from './utils'
 import './db/redis'
@@ -43,7 +43,7 @@ app.on('error', function (err: Error, ctx: Koa.Context) {
 const server = http.createServer(app.callback())
 
 server.listen(port, () => {
-  logger.info(`Listening on http://${getIPAdress()}:${port}`)
+  outLogger.info(`Listening on http://${getIPAdress()}:${port}`)
 })
 
 attach(server)

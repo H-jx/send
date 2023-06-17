@@ -1,5 +1,5 @@
 import { Context } from 'koa'
-import { logger } from '../common/logger'
+import { outLogger } from '../common/logger'
 /**
  * 日志中间件
  */
@@ -9,8 +9,8 @@ export default async (ctx: Context, next: () => Promise<void>) => {
     return
   }
   const start = new Date().getTime()
-  logger.info(`<-- ${ctx.method} ${ctx.url}`)
+  outLogger.info(`<-- ${ctx.method} ${ctx.url}`)
   await next()
   const ms = new Date().getTime() - start
-  logger.info(`--> ${ctx.method} ${ctx.url} - ${ms}ms`)
+  outLogger.info(`--> ${ctx.method} ${ctx.url} - ${ms}ms`)
 }

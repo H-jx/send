@@ -3,7 +3,7 @@ import { RPCMethod, RPCService } from 'ts-brpc/server'
 import { v4 as uuidv4 } from 'uuid'
 import { bossConfig } from '../config'
 import { errorJSON, successJSON } from '../common/response'
-import { logger } from '../common/logger'
+import { outLogger } from '../common/logger'
 import { ResponseBody } from '../interface/Http'
 import { redis } from '../db/redis'
 import { Context } from 'koa'
@@ -56,7 +56,7 @@ export class Upload {
       }
       return successJSON({ data: { upload: upload, download: download } })
     } catch (error) {
-      logger.error(error)
+      outLogger.error(error)
       return errorJSON({ message: `签名失败: ${error}` })
     }
   }

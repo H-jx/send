@@ -1,8 +1,8 @@
 import * as fs from 'fs'
-import { resolve } from 'path'
+import { resolve, join } from 'path'
 // uat-config 注入容器默认位置
 
-const configPath = resolve(__dirname, './config.json')
+const configPath = resolve(join(__dirname, './config.json'))
 const defaultConfig = {
   redis: {
     host: '192.168.0.1',
