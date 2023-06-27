@@ -1,6 +1,6 @@
 import { Context } from 'koa'
 import { RPCMethod, RPCService } from 'ts-brpc/server'
-import { logger } from '../common/logger'
+import { outLogger } from '../common/logger'
 import { errorJSON, successJSON } from '../common/response'
 import { ResponseBody } from '../interface/Http'
 
@@ -16,7 +16,7 @@ export class Statistics {
 
       return successJSON({ data: rooms })
     } catch (error) {
-      logger.error(error)
+      outLogger.error(error)
       return errorJSON({ message: (error as Error).message })
     }
   }
@@ -27,7 +27,7 @@ export class Statistics {
       const data = await getUserList()
       return successJSON({ data: data })
     } catch (error) {
-      logger.error(error)
+      outLogger.error(error)
       return errorJSON()
     }
   }
