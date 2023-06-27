@@ -32,7 +32,10 @@ function copy(next) {
   const copyJSON = src(['./src/*.json']).pipe(dest('dist'))
   return copyJSON;
 }
-
+function copy2(next) {
+  const copyJSON = src(['./src/server/*.json']).pipe(dest('dist/server'))
+  return copyJSON;
+}
 /** 
  * 配合构建脚本 http://ops-rider.bilibili.co/Script/build_sh?name=ff-send&page=1&per_page=10 
  * 将package.deploy.json替换成package.json，减少打包体积
@@ -55,5 +58,5 @@ function simplify(next) {
 }
 
 
-exports.build = series(clearServer, compile, compileLib, copy, simplify);
+exports.build = series(clearServer, compile, compileLib, copy, copy2, simplify);
 
