@@ -40,16 +40,16 @@ export class Upload {
       Expires: signedUrlExpireSeconds,
     }
 
-    if (query.roomid) {
-      try {
-        const downloadURL = await minioClient.presignedPutObject(params.Bucket, params.Key, params.Expires)
-        return successJSON({ data: { download: downloadURL } })
-        // 获取下载链接
-      } catch (error) {
-        // console.log(error)
-        // 不存在则继续
-      }
-    }
+    // if (query.roomid) {
+    //   try {
+    //     const downloadURL = await minioClient.presignedGetObject(params.Bucket, params.Key, params.Expires)
+    //     return successJSON({ data: { download: downloadURL } })
+    //     // 获取下载链接
+    //   } catch (error) {
+    //     // console.log(error)
+    //     // 不存在则继续
+    //   }
+    // }
     try {
       let [upload, download] = await Promise.all([
         minioClient.presignedPutObject(params.Bucket, params.Key, params.Expires),
