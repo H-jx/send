@@ -26,12 +26,20 @@ export class Upload {
     roomid?: string
     fileName: string
   }): Promise<ResponseBody<{ upload?: string; download: string }>> {
+    const referer = this.ctx.header['referer'] || '';
+    const isHttps = referer.includes('https')
+    // 使用url模块解析URL
+    const parsedUrl = new URL(referer);
+    // 提取查询参数
+    const queryParams = parsedUrl.searchParams;
+
+    
     const params = {
       Bucket: bossConfig.bucket,
-      Key: `${query.roomid ?? uuidv4()}/${query.fileName}`,
+      Key: `${query.roomid ?? queryParams.get('roomid') ?? uuidv4()}/${query.fileName}`,
       Expires: signedUrlExpireSeconds,
     }
-    const isHttps = this.ctx.header['referer']?.includes('https')
+
     if (query.roomid) {
       try {
         const downloadURL = await minioClient.presignedPutObject(params.Bucket, params.Key, params.Expires)
