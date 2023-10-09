@@ -17,7 +17,6 @@ const minioClient = new Client({
 })
 const signedUrlExpireSeconds = 60 * 60 * 24 * 15
 outLogger.info(bossConfig);
-
 @RPCService()
 export class Upload {
   ctx!: Context
@@ -45,8 +44,8 @@ export class Upload {
     }
     try {
       let [upload, download] = await Promise.all([
-        minioClient.presignedPutObject(params.Bucket, params.Key),
-        minioClient.presignedGetObject(params.Bucket, params.Key),
+        minioClient.presignedPutObject(params.Bucket, params.Key, params.Expires),
+        minioClient.presignedGetObject(params.Bucket, params.Key, params.Expires),
       ])
 
       // const configReplace = await redis.get('test-replace')
