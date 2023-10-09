@@ -15,7 +15,7 @@ const minioClient = new Client({
   accessKey: bossConfig.accessKeyId,
   secretKey: bossConfig.secretAccessKey,
 })
-const signedUrlExpireSeconds = 60 * 60 * 24 * 15
+const signedUrlExpireSeconds = 60 * 60 * 24 * 7
 outLogger.info(bossConfig);
 @RPCService()
 export class Upload {
@@ -23,16 +23,16 @@ export class Upload {
 
   @RPCMethod()
   async getUploadAction(query: {
-    md5?: string
+    roomid?: string
     fileName: string
   }): Promise<ResponseBody<{ upload?: string; download: string }>> {
     const params = {
       Bucket: bossConfig.bucket,
-      Key: `${query.md5 ?? uuidv4()}/${query.fileName}`,
+      Key: `${query.roomid ?? uuidv4()}/${query.fileName}`,
       Expires: signedUrlExpireSeconds,
     }
     const isHttps = this.ctx.header['referer']?.includes('https')
-    if (query.md5) {
+    if (query.roomid) {
       try {
         const downloadURL = await minioClient.presignedPutObject(params.Bucket, params.Key, params.Expires)
         return successJSON({ data: { download: downloadURL } })
