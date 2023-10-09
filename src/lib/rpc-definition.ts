@@ -21,7 +21,7 @@ export namespace FFSendNS {
 
     interface Upload {
         getUploadAction(query: {
-            md5?: string
+            roomid?: string
             fileName: string
             }): Promise<ResponseBody<{ upload?: string; download: string }>>;
     }

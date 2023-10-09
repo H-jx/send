@@ -15,7 +15,7 @@ const minioClient = new Client({
   accessKey: bossConfig.accessKeyId,
   secretKey: bossConfig.secretAccessKey,
 })
-const signedUrlExpireSeconds = 60 * 60 * 24 * 7
+const signedUrlExpireSeconds = 60 * 60 * 24 * 7;
 outLogger.info(bossConfig);
 @RPCService()
 export class Upload {

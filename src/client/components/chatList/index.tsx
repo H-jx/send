@@ -6,7 +6,7 @@ export const ChatList: FC = (props) => {
   const isBottom = useRef(true)
 
   useLayoutEffect(() => {
-    const onscroll = (e) => {
+    const onscroll = () => {
       if (scrollRef.current == null) return
       const { clientHeight, scrollTop, scrollHeight } = scrollRef.current
       isBottom.current = clientHeight + scrollTop === scrollHeight
