@@ -8,6 +8,7 @@ import { getFileSize } from 'src/client/utils/getFileSize'
 import { getFileExt } from 'src/client/utils/getFileExt'
 import style from './style.module.less'
 import { CopyInput } from '../copyInput'
+import { copy } from './copy'
 
 export interface Props {
   type: CustomMessage['type']
@@ -19,7 +20,9 @@ export interface Props {
   percent?: number
 }
 const imgType = ['apng', 'avif', 'gif', 'jpeg', 'webp', 'png', 'svg', 'jpg']
-
+const svg = `
+<svg t="1661407452650" fill="currentColor" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3149" width="16" height="16"><path d="M704 896v80c0 26.51-21.49 48-48 48H112c-26.51 0-48-21.49-48-48V240c0-26.51 21.49-48 48-48h144v592c0 61.758 50.242 112 112 112h336z m0-688V0H368c-26.51 0-48 21.49-48 48v736c0 26.51 21.49 48 48 48h544c26.51 0 48-21.49 48-48V256H752c-26.4 0-48-21.6-48-48z m241.942-62.058L814.058 14.058A48 48 0 0 0 780.118 0H768v192h192v-12.118a48 48 0 0 0-14.058-33.94z" p-id="3150"></path></svg>
+`
 export const MsgType: FC<Props> = (props) => {
   const renderFile = () => {
     const fileName = props.file?.name || ''
@@ -71,7 +74,15 @@ export const MsgType: FC<Props> = (props) => {
 
   return (
     <Bubble type="right" status={props.status ?? 'resolved'} percent={props.percent} time={props.time}>
-      { props.type === 'file' ? null : <CopyInput className={style.copyInput}  data={props.text} />}
+     {(props.status ?? 'resolved') === 'resolved' && (props.type === 'text' || location.protocol === 'https:') && (
+        <span
+          onClick={() => {
+            copy(props.type, props.type === 'file' ? props.url : props.text, props.file?.name || '')
+          }}
+          className={style.copyBtn}
+          dangerouslySetInnerHTML={{ __html: svg }}
+        ></span>
+      )}
       <div>{props.type === 'file' ? renderFile() : renderText()}</div>
     </Bubble>
   )
