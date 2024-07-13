@@ -58,7 +58,6 @@ export const MsgType: FC<Props> = (props) => {
     const isLink = props?.text?.startsWith('http')
     return (
       <>
-        <CopyInput className={style.copyInput}  data={props.text} />
         {isLink ? (
           <a className={style.urlText} target={'_blank'} href={props.text} rel="noreferrer">
             {props.text}
@@ -72,6 +71,7 @@ export const MsgType: FC<Props> = (props) => {
 
   return (
     <Bubble type="right" status={props.status ?? 'resolved'} percent={props.percent} time={props.time}>
+      { props.type === 'file' ? null : <CopyInput className={style.copyInput}  data={props.text} />}
       <div>{props.type === 'file' ? renderFile() : renderText()}</div>
     </Bubble>
   )
