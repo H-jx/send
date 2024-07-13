@@ -15,37 +15,45 @@ const minioClient = new Client({
   accessKey: bossConfig.accessKeyId,
   secretKey: bossConfig.secretAccessKey,
 })
-const signedUrlExpireSeconds = 86400000 * 1
-
+const signedUrlExpireSeconds = 60 * 60 * 24 * 7;
+outLogger.info(bossConfig);
 @RPCService()
 export class Upload {
   ctx!: Context
 
   @RPCMethod()
   async getUploadAction(query: {
-    md5?: string
+    roomid?: string
     fileName: string
   }): Promise<ResponseBody<{ upload?: string; download: string }>> {
+    const referer = this.ctx.header['referer'] || '';
+    const isHttps = referer.includes('https')
+    // 使用url模块解析URL
+    const parsedUrl = new URL(referer);
+    // 提取查询参数
+    const queryParams = parsedUrl.searchParams;
+
+    
     const params = {
       Bucket: bossConfig.bucket,
-      Key: `${query.md5 ?? uuidv4()}/${query.fileName}`,
+      Key: `${query.roomid ?? queryParams.get('roomid') ?? uuidv4()}/${query.fileName}`,
       Expires: signedUrlExpireSeconds,
     }
-    const isHttps = this.ctx.header['referer']?.includes('https')
-    if (query.md5) {
-      try {
-        const downloadURL = await minioClient.presignedPutObject(params.Bucket, params.Key, params.Expires)
-        return successJSON({ data: { download: downloadURL } })
-        // 获取下载链接
-      } catch (error) {
-        // console.log(error)
-        // 不存在则继续
-      }
-    }
+
+    // if (query.roomid) {
+    //   try {
+    //     const downloadURL = await minioClient.presignedGetObject(params.Bucket, params.Key, params.Expires)
+    //     return successJSON({ data: { download: downloadURL } })
+    //     // 获取下载链接
+    //   } catch (error) {
+    //     // console.log(error)
+    //     // 不存在则继续
+    //   }
+    // }
     try {
       let [upload, download] = await Promise.all([
-        minioClient.presignedPutObject(params.Bucket, params.Key),
-        minioClient.presignedGetObject(params.Bucket, params.Key),
+        minioClient.presignedPutObject(params.Bucket, params.Key, params.Expires),
+        minioClient.presignedGetObject(params.Bucket, params.Key, params.Expires),
       ])
 
       // const configReplace = await redis.get('test-replace')

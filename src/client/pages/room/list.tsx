@@ -47,7 +47,8 @@ export const List: FC<{ roomId: string }> = (props) => {
       if (file.size > 1048576) {
         md5 = await getFileMD5(data as File)
       }
-      const res = await rpc.Upload.getUploadAction({ fileName: file.name, md5 })
+      console.log(props.roomId)
+      const res = await rpc.Upload.getUploadAction({ fileName: file.name, roomid: props.roomId })
       uploadURL = res.data?.upload
       downloadURL = res.data?.download
       fileMessage.url = downloadURL
