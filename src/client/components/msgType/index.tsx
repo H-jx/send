@@ -7,6 +7,7 @@ import { CustomMessage } from 'src/client/pages/room/useSocket'
 import { getFileSize } from 'src/client/utils/getFileSize'
 import { getFileExt } from 'src/client/utils/getFileExt'
 import style from './style.module.less'
+import { CopyInput } from '../copyInput'
 
 export interface Props {
   type: CustomMessage['type']
