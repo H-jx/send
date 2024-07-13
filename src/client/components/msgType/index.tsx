@@ -57,6 +57,7 @@ export const MsgType: FC<Props> = (props) => {
     const isLink = props?.text?.startsWith('http')
     return (
       <>
+        <CopyInput className={style.copyInput}  data={props.text} />
         {isLink ? (
           <a className={style.urlText} target={'_blank'} href={props.text} rel="noreferrer">
             {props.text}
