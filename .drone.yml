@@ -2,17 +2,17 @@ kind: pipeline
 type: ssh
 name: default
 
+server:
+  host: 
+    from_secret: CURRENT_HOST
+  user: root
+  password:
+    from_secret: SSH_PWD
+
 steps:
 - name: deploy
-  image: appleboy/drone-ssh
-  settings:
-    host: 106.75.237.248
-    username: root
-    password:
-      from_secret: SSH_PWD
-    port: 22
-    command_timeout: 2m
-    script:
-      - printenv
-      - docker-compose up -d --force-recreate
-      - docker ps
+  command_timeout: 2m
+  script:
+    - printenv
+    - docker-compose up -d --force-recreate
+    - docker ps
