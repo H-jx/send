@@ -1,0 +1,19 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    container_name: send-redis
+    ports:
+      - 27125:6379
+  nodejs:
+    image: node:16-alpine
+    container_name: send
+    working_dir: /data/app/send
+    volumes:
+      - /data/app/send:/data/app/send
+    ports:
+      - "3004:3000"
+    command: ["/bin/sh", "-c", "ls && npm run start"]
+networks:
+  send:
+    driver: bridge

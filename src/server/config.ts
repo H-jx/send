@@ -2,7 +2,9 @@ import * as fs from 'fs'
 import { resolve, join } from 'path'
 // uat-config 注入容器默认位置
 
-const configPath = resolve(join(__dirname, './config.json'))
+const configPath = process.env.NODE_ENV === 'development'
+? resolve(join(__dirname, './config.json'))
+: '/data/minio/config/send/config.json'
 const defaultConfig = {
   redis: {
     host: '192.168.0.1',
