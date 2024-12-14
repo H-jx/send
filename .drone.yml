@@ -11,8 +11,6 @@ server:
 
 steps:
 - name: deploy
-  command_timeout: 2m
-  script:
-    - printenv
+  commands:
     - docker-compose up -d --force-recreate
     - docker ps
