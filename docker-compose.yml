@@ -11,6 +11,7 @@ services:
     working_dir: /data/app/send
     volumes:
       - /data/app/send:/data/app/send
+      - /data/minio/config:/data/minio/config
     ports:
       - "3004:3000"
     command: ["/bin/sh", "-c", "ls && npm run start"]
