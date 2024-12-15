@@ -55,7 +55,7 @@ steps:
       script:
         - cd /data/app/send
         - ls -l /data/minio/config/send/config.json
-        - sudo cp /data/minio/config/send/config.json /data/app/send/dist/server/config.json
+        - mc cp local/config/send/config.json /data/app/send/dist/server/config.json
         - docker stop send
         - docker rm send
         - docker-compose up -d 
