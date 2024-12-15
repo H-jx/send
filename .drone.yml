@@ -56,7 +56,7 @@ steps:
         - cd /data/app/send
         - docker stop send
         - docker rm send
-        - docker-compose up -d --force-recreate
+        - docker-compose up -d 
       
 
 volumes:
