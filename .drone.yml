@@ -54,6 +54,8 @@ steps:
       command_timeout: 2m
       script:
         - cd /data/app/send
+        - ls /data/minio/config/send/config.json
+        - cp /data/minio/config/send/config.json /data/app/send/dist/server/config.json
         - docker stop send
         - docker rm send
         - docker-compose up -d 
