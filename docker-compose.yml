@@ -1,7 +1,7 @@
 version: "3"
 services:
   redis:
-    image: redis
+    image: redis:6-alpine
     container_name: send-redis
     ports:
       - 27125:6379
