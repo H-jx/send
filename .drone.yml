@@ -1,25 +1,45 @@
 kind: pipeline
-type: ssh
-name: deploy-nginx
+type: docker
+name: default
 
-server:
-  host:
-    from_secret: CURRENT_HOST
-  user: root
-  password:
-    from_secret: SSH_PWD
 
 steps:
-  - name: build and deploy
-    commands:
-      - mkdir -p /data/app/send
-      - cp -r ./* /data/app/send
-      - cd /data/app/send
-      - mc cp local/config/send/config.json /data/app/send/dist/server/config.json
-      - npm config set registry https://registry.npmmirror.com/
-      - npm install yarn -g
-      - yarn install
-      - yarn run build
-      - docker stop send
-      - docker rm send
-      - docker-compose up -d 
+  - name: scp
+    image: appleboy/drone-scp
+    settings:
+      debug: true
+      source:
+        - ./
+      host:
+        from_secret: CURRENT_HOST_IN
+      username: root
+      port: 22
+      password:
+        from_secret: SSH_PWD
+      target: /data/app/send
+
+  - name: deploy
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: CURRENT_HOST_IN
+      username: root
+      password:
+        from_secret: SSH_PWD
+      port: 22
+      command_timeout: 2m
+      environment:
+        MYSQL_PASSWORD:
+          from_secret: MYSQL_PASSWORD
+      envs: 
+        - MYSQL_PASSWORD
+      script:
+        - cd /data/app/send
+        - mc cp local/config/send/config.json /data/app/send/dist/server/config.json
+        - npm config set registry https://registry.npmmirror.com/
+        - npm install yarn -g
+        - yarn install
+        - yarn run build
+        - docker stop send
+        - docker rm send
+        - docker-compose up -d 
