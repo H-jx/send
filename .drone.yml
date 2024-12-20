@@ -35,11 +35,11 @@ steps:
         - MYSQL_PASSWORD
       script:
         - cd /data/app/send
-        - mc cp local/config/send/config.json /data/app/send/dist/server/config.json
         - npm config set registry https://registry.npmmirror.com/
         - npm install yarn -g
         - yarn install
         - yarn run build
+        - mc cp local/config/send/config.json /data/app/send/dist/server/config.json
         - docker stop send
         - docker rm send
         - docker-compose up -d 
