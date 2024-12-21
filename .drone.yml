@@ -43,3 +43,4 @@ steps:
         - docker stop send
         - docker rm send
         - docker-compose up -d 
+        - docker-compose logs
