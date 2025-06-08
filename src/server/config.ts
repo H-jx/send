@@ -5,7 +5,7 @@ import { resolve, join } from 'path'
 const configPath = resolve(join(__dirname, './config.json'))
 const defaultConfig = {
   redis: {
-    host: 'redis',
+    host: '172.20.0.1',
     port: 27125,
   },
   minio: {
