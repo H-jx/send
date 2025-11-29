@@ -17,6 +17,7 @@ function compile(next) {
     .pipe(
       tsProject({
         noImplicitAny: true,
+        sourceMap: false
       }),
     );
   return compiled.js.pipe(dest('dist/server'));
