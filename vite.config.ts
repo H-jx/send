@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  root: 'src/client', // 指定前端入口目录
   plugins: [react()],
   resolve: {
     alias: {
