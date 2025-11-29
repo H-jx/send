@@ -1,5 +1,5 @@
 import Redis from 'ioredis'
-import { outLogger } from 'src/server/common/logger'
+import { outLogger } from '@/server/common/logger'
 import { redisConfig } from '../config'
 
 export const redis = new Redis({

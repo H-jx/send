@@ -1,6 +1,6 @@
 import style from './style.module.less'
 import { useNavigate } from 'react-router-dom'
-import Bar from 'src/client/components/bar'
+import Bar from '@/client/components/bar'
 
 export const Header = () => {
   const navigator = useNavigate()

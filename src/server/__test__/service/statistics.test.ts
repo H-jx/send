@@ -1,4 +1,4 @@
-import { getUserList, getCurrentRoomts, recordRoomKey, recordUser, removeRoomKey } from 'src/server/service/statistics'
+import { getUserList, getCurrentRoomts, recordRoomKey, recordUser, removeRoomKey } from '@/server/service/statistics'
 // import request from 'supertest'
 // import app from '../../app'
 

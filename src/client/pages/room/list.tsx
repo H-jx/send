@@ -9,8 +9,8 @@ import { BaseUrl } from '../../utils/fetch'
 import { useSocket, CustomMessage, FileMessage } from './useSocket'
 import { rpc } from '../../utils/fetch'
 import { request } from '../../utils/request'
-import { getFileMD5 } from 'src/client/utils/getFIleMD5'
-import Cover from 'src/client/components/upload/cover'
+import { getFileMD5 } from '@/client/utils/getFIleMD5'
+import Cover from '@/client/components/upload/cover'
 
 export const List: FC<{ roomId: string }> = (props) => {
   const socket = useSocket(BaseUrl, props.roomId)

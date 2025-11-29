@@ -1,4 +1,4 @@
-import { Message } from 'src/lib/interface'
+import { Message } from '@/lib/interface'
 import { redis } from '../db/redis'
 const roomPrefix = 'room-'
 const sevenDay = 86400 * 30

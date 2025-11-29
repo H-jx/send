@@ -1,7 +1,7 @@
 import http from 'http'
 import io from 'socket.io'
-import { outLogger } from 'src/server/common/logger'
-import { Message, SocketHandler, SocketEvents, SOCKET_EVENT_MAP } from 'src/lib/interface'
+import { outLogger } from '@/server/common/logger'
+import { Message, SocketHandler, SocketEvents, SOCKET_EVENT_MAP } from '@/lib/interface'
 import { getRoom, getRoomMessageList, getRoomTll, pushMessage, removeRoom } from '../service/room'
 import { recordUser, recordRoomKey, getCurrentRoomts, removeRoomKey } from '../service/statistics'
 

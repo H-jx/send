@@ -1,6 +1,6 @@
 // import request from 'supertest'
 // import app from '../../app'
-import { Upload } from 'src/server/controller/upload'
+import { Upload } from '@/server/controller/upload'
 
 test('/api upload/getUploadAction', async () => {
   const uploadController = new Upload()

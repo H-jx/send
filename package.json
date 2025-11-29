@@ -5,8 +5,8 @@
   "license": "MIT",
   "browserslist": "> 0.5%, last 10 versions, not dead",
   "scripts": {
-    "client:dev": "rimraf dist/client && parcel src/client/index.html --dist-dir ./dist/client --host 0.0.0.0",
-    "client:build": "parcel build src/client/index.html --dist-dir dist/client",
+    "client:dev": "rimraf dist/client && vite",
+    "client:build": "vite build",
     "rpc:server": "yarn ts-brpc server -c ./src/ts-brpc.json",
     "rpc:client": "yarn ts-brpc client -c ./src/ts-brpc.json",
     "server:dev": "yarn rpc:server && cross-env NODE_ENV=development nodemon --config nodemon.json",
@@ -54,11 +54,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@parcel/packager-raw-url": "2.3.2",
-    "@parcel/service-worker": "^2.3.2",
-    "@parcel/transformer-less": "2.3.2",
-    "@parcel/transformer-typescript-tsc": "^2.3.2",
-    "@parcel/transformer-webmanifest": "2.3.2",
     "@types/aws-sdk": "^2.7.0",
     "@types/ioredis": "^4.28.8",
     "@types/jest": "^27.4.1",
@@ -82,6 +77,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
+    "@vitejs/plugin-react": "^5.1.1",
     "cross-env": "^7.0.3",
     "eslint": "^8.9.0",
     "eslint-config-prettier": "^8.4.0",
@@ -93,18 +89,16 @@
     "gulp-ts-alias-fix": "^2.2.2",
     "gulp-typescript": "^6.0.0-alpha.1",
     "jest": "^27.5.1",
+    "less": "^4.4.2",
     "nodemon": "^2.0.15",
-    "parcel": "^2.3.2",
-    "postcss": "^8.0.0",
-    "postcss-modules": "^4.3.0",
     "prettier": "^2.5.1",
     "process": "^0.11.10",
     "rimraf": "^3.0.2",
     "supertest": "^6.2.2",
     "ts-jest": "^27.1.3",
     "ts-node": "^10.5.0",
-    "typescript": ">=3.0.0",
-    "typescript-plugin-css-modules": "^3.4.0"
+    "typescript": "3.8",
+    "vite": "^7.2.4"
   },
   "alias": {
     "src": "./src"

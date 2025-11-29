@@ -1,4 +1,4 @@
-import { Room } from 'src/server/controller/room'
+import { Room } from '@/server/controller/room'
 // import request from 'supertest'
 // import app from '../../app'
 

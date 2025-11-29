@@ -1,8 +1,8 @@
 import { io, Socket } from 'socket.io-client'
 import { useEffect, useRef } from 'react'
 import useModel from 'use-easy-model'
-import { SOCKET_EVENT_MAP, Message, SocketHandler } from 'src/lib/interface'
-import getCookie from 'src/client/utils/getCookie'
+import { SOCKET_EVENT_MAP, Message, SocketHandler } from '@/lib/interface'
+import getCookie from '@/client/utils/getCookie'
 
 export interface FileMessage extends Message {
   status: 'resolved' | 'rejected' | 'uploading'

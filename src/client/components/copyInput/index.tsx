@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import style from './index.module.less'
 import { TextOutline } from 'antd-mobile-icons'
-import { fallbackCopyTextToClipboard } from 'src/client/utils/copy'
+import { fallbackCopyTextToClipboard } from '@/client/utils/copy'
 
 export const CopyInput: FC<{ title: string; data: string; className: string }> = (props) => {
   const copy = () => {

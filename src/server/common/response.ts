@@ -1,4 +1,4 @@
-import { ResponseCodeType, ResponseBody } from 'src/server/interface/Http'
+import { ResponseCodeType, ResponseBody } from '@/server/interface/Http'
 
 /**
  * 成功反馈的数据格式
