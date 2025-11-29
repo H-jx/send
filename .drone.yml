@@ -32,6 +32,7 @@ steps:
         - cd /data/app/send
         - npm config set registry https://registry.npmmirror.com/
         - npm install yarn -g
+        - rm  -rf .postcssrc
         - yarn install
         - yarn run build
         - mc cp local/config/send/config.json /data/app/send/dist/server/config.json
