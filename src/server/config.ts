@@ -6,7 +6,7 @@ const configPath = resolve(join(__dirname, './config.json'))
 const defaultConfig = {
   redis: {
     host: '172.20.0.1',
-    port: 27125,
+    port: 16000,
   },
   minio: {
     bucket: '',
