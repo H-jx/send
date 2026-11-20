@@ -8,14 +8,16 @@ services:
     networks:
       - shared_network
   nodejs:
-    image: node:20-alpine
+    image: node:24-alpine
     container_name: send
     working_dir: /data/app/send
     volumes:
       - /data/app/send:/data/app/send
     ports:
       - "3004:3000"
-    command: ["/bin/sh", "-c", "ls && npm run start"]
+    command: ["/bin/sh", "-c", "npm start"]
+    env_file:
+      - .env.production
     networks:
       - shared_network
 networks:

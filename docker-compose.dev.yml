@@ -1,0 +1,30 @@
+version: "3"
+# 本地开发/验证依赖：Redis + SeaweedFS(S3 兼容，代替已归档的本地 MinIO)
+# 说明：MinIO 开源镜像/二进制已于 2026 年归档下线，本地验证改用 SeaweedFS S3 网关，
+# 真实校验 AWS4-HMAC-SHA256 预签名（与 MinIO 行为一致，生产仍用 MinIO）。
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: send-redis-test
+    ports:
+      - 6379:6379
+  s3:
+    image: chrislusf/seaweedfs
+    container_name: send-s3-test
+    ports:
+      - 9000:8333
+      - 8888:8888
+    volumes:
+      - ./test/fixtures:/etc/seaweedfs
+    command: server -dir=/data -s3 -s3.config=/etc/seaweedfs/seaweedfs-s3.json -ip=127.0.0.1 -mdir=/data/master
+    environment:
+      BUCKET: send-test
+  # 建桶（一次性）：docker compose run --rm createbuckets
+  createbuckets:
+    image: chrislusf/seaweedfs
+    depends_on:
+      - s3
+    profiles: ["init"]
+    entrypoint: >
+      sh -c "sleep 4; printf 's3.bucket.create -name send-test\n' |
+      weed shell -master=127.0.0.1:9333 -filer=127.0.0.1:8888 || true"

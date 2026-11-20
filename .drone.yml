@@ -2,7 +2,6 @@ kind: pipeline
 type: docker
 name: default
 
-
 steps:
   - name: scp
     image: appleboy/drone-scp
@@ -27,16 +26,19 @@ steps:
       password:
         from_secret: SSH_PWD
       port: 22
-      command_timeout: 2m
+      command_timeout: 5m
       script:
         - cd /data/app/send
         - npm config set registry https://registry.npmmirror.com/
-        - npm install yarn -g
-        - rm  -rf .postcssrc
-        - yarn install
-        - yarn run build
-        - mc cp local/config/send/config.json /data/app/send/dist/server/config.json
-        - docker stop send
-        - docker rm send
-        - docker-compose up -d 
+        - npm ci
+        # 契约链路自检：schema→openapi→客户端，与提交不一致即失败
+        - npm run codegen
+        - git diff --exit-code openapi.json app/api/generated
+        - npm run typecheck
+        - npm run build
+        # 密钥经环境文件注入（不再落 config.json 到构建产物）
+        - mc cp local/config/send/.env.production /data/app/send/.env.production
+        - docker stop send || true
+        - docker rm send || true
+        - docker-compose up -d
         - docker-compose logs

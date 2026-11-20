@@ -1,11 +1,14 @@
 {
   "extends": "./tsconfig.json",
-  "compileOnSave": true,
   "compilerOptions": {
-    "emitDecoratorMetadata": true,
-    "noImplicitThis": true,
-    "stripInternal": true,
-    "pretty": true,
-    "outDir": "dist/server",
-  }
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": ".",
+    "outDir": "dist",
+    "noEmit": false,
+    "declaration": false,
+    "sourceMap": true,
+    "types": ["node"]
+  },
+  "include": ["server/**/*.ts", "shared/**/*.ts"]
 }
