@@ -1,12 +1,12 @@
 version: "3"
 services:
-  redis:
-    image: redis:6-alpine
-    container_name: send-redis
-    ports:
-      - 27125:6379
-    networks:
-      - shared_network
+  # redis:
+  #   image: redis:6-alpine
+  #   container_name: send-redis
+  #   ports:
+  #     - 27125:6379
+  #   networks:
+  #     - shared_network
   nodejs:
     image: node:24-alpine
     container_name: send
