@@ -33,7 +33,7 @@ const envSchema = z.object({
   MINIO_SECRET_KEY: z.string().min(1).default(''),
   MINIO_BUCKET: z.string().min(1).default('send'),
   /** 固定 region 避免 SDK 预签名前发起 GetBucketLocation（离线签名） */
-  MINIO_REGION: z.string().default('us-east-1'),
+  // MINIO_REGION: z.string().default('us-east-1'),
   /** 预签名 URL 协议策略：auto=按请求协议改写；keep=SDK 原样；https=强制 https */
   MINIO_URL_SCHEME: z.enum(['auto', 'keep', 'https']).default('auto'),
   /** 预签名有效期（秒），默认 7 天，同旧实现 */

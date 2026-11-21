@@ -66,7 +66,7 @@ export function createUploadService(env: EnvConfig, client?: Client): UploadServ
       useSSL: env.MINIO_USE_SSL,
       accessKey: env.MINIO_ACCESS_KEY,
       secretKey: env.MINIO_SECRET_KEY,
-      region: env.MINIO_REGION,
+      // region: env.MINIO_REGION,
     })
 
   return {
