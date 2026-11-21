@@ -280,34 +280,41 @@ body {
 }
 .nav {
   flex: none;
-  height: 40px;
-  line-height: 40px;
-  text-align: center;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   font-size: 20px;
   border-bottom: 1px solid var(--send-border);
   position: relative;
+  padding: 0 12px;
 }
-.nav .id { color: #666; font-size: 14px; margin-right: 6px; }
+.nav .id { color: #666; font-size: 14px; }
 .nav .peer {
   position: absolute;
   right: 12px;
-  top: 8px;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 12px;
   color: #8a94a0;
   background: #fff;
   border-radius: 10px;
-  padding: 2px 8px;
+  padding: 3px 9px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 .nav .share-open {
   display: none;
   position: absolute;
   left: 12px;
-  top: 8px;
-  font-size: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
   color: var(--send-primary);
   background: none;
   border: 0;
   cursor: pointer;
+  padding: 6px;
 }
 .msgs {
   flex: 1;
@@ -412,23 +419,35 @@ body {
   border: 0;
   outline: 0;
   resize: none;
-  font-size: 20px;
-  padding: 6px 16px 0;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 20px 12px 0;
   font-family: inherit;
+  background: transparent;
+  color: #222;
+}
+.chat-text::placeholder {
+  color: #b5b5b5;
+  font-size: 15px;
 }
 .plus {
-  font-size: 40px;
-  line-height: 60px;
-  margin-right: 16px;
-  color: #333;
   flex: none;
-  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  background: #f2f4f7;
   border: 0;
-  background: none;
-  border-radius: 10px;
-  transition: background 0.15s;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
 }
-.plus:hover { background: #f0f4f8; }
+.plus:hover { background: #e6ebf2; color: var(--send-primary); }
+.plus:active { background: #dbe3ec; }
+.plus:focus-visible { outline: 2px solid var(--send-primary); outline-offset: 2px; }
 .send-btn {
   margin-right: 12px;
   height: 36px;
@@ -635,9 +654,11 @@ body {
   .entry-right { display: none; }
   .entry-inner { margin-top: 0; }
   .room { align-items: stretch; }
+  .room-cols { width: 100%; }
   .share { display: none; }
   .list { width: 100%; height: 100%; border-radius: 0; }
   .nav .share-open { display: block; }
+  .nav .peer { display: none; }
   .ff-footer { display: none; }
   .inputbar { height: calc(60px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); }
   .disconnect-bar { bottom: calc(60px + env(safe-area-inset-bottom)); }

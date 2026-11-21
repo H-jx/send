@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Plus } from 'lucide-react'
 
 /**
  * 输入条（原版 60px 白条贴底）：文本 + 多文件 + 粘贴图片确认。
@@ -64,7 +65,8 @@ export function ChatInput(props: {
           rows={1}
           value={text}
           aria-label="消息输入"
-          placeholder="输入内容，Enter 发送 / Shift+Enter 换行"
+          title="Enter 发送 / Shift+Enter 换行"
+          placeholder="输入内容…"
           onChange={(e) => setText(e.currentTarget.value)}
           onKeyDown={(e) => {
             if (e.key !== 'Enter' || e.shiftKey) return
@@ -79,8 +81,8 @@ export function ChatInput(props: {
             composingRef.current = false
           }}
         />
-        <button type="button" className="plus" aria-label="选择文件" onClick={() => fileRef.current?.click()}>
-          +
+        <button type="button" className="plus" aria-label="选择文件" title="上传文件" onClick={() => fileRef.current?.click()}>
+          <Plus size={22} strokeWidth={2.5} />
         </button>
         <input ref={fileRef} type="file" accept="*" multiple className="hidden" onChange={onFiles} />
         {text.trim().length > 0 && (

@@ -37,7 +37,7 @@ steps:
         - npm run typecheck
         - npm run build
         # 密钥经环境文件注入（不再落 config.json 到构建产物）
-        - mc cp local/config/send/.env.production /data/app/send/.env.production
+        - mc cp local/config/send/env /data/app/send/.env
         - docker stop send || true
         - docker rm send || true
         - docker-compose up -d

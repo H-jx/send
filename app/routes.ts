@@ -8,5 +8,7 @@ export default [
     // 旧链接兼容：/room?roomId=xxxx → 重定向（dev/prod 均可直达与刷新）
     route('room', 'routes/room.tsx'),
     route('data', 'routes/data.tsx'),
+    // SPA 通配兜底：未知路径渲染 404 页，不再抛 "No route matches URL"
+    route('*', 'routes/not-found.tsx'),
   ]),
 ]

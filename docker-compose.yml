@@ -14,7 +14,7 @@ services:
     volumes:
       - /data/app/send:/data/app/send
     ports:
-      - "3004:3000"
+      - "3004:3004"
     command: ["/bin/sh", "-c", "npm start"]
     env_file:
       - .env.production
