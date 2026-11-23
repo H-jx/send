@@ -3,7 +3,8 @@ import type { AddressInfo } from 'node:net'
 import { io as ioClient, type Socket } from 'socket.io-client'
 import type { SocketClientToServer, SocketServerToClient } from '../../shared/events.js'
 import { SOCKET_EVENTS } from '../../shared/events.js'
-import type { Message } from '../../shared/message.js'
+import type { EncryptedMessageInput, RoomMessage } from '../../shared/message.js'
+import { createMessageCrypto } from '../../app/features/room/message-crypto.js'
 import { buildApp } from '../../server/app.js'
 import { createServices } from '../../server/services/index.js'
 import { attachSocket } from '../../server/realtime/index.js'
@@ -85,29 +86,34 @@ describe.runIf(hasRedis)('Socket.IO 实时（双真实客户端）', () => {
     const b = await connect(url, roomId, '乙')
     clients.push(a, b)
 
-    const bGot = nextEvent<Message>(b, SOCKET_EVENTS.MSG_RECEIVE)
+    const roomCrypto = createMessageCrypto(roomId)
+    const envelope = await roomCrypto.encrypt({ id: 'rt-1', type: 'text', text: '你好，Send' })
+    const bGot = nextEvent<RoomMessage>(b, SOCKET_EVENTS.MSG_RECEIVE)
     const ack = await new Promise<{ success: boolean }>((resolve) => {
-      a.emit(SOCKET_EVENTS.MSG_SEND, { id: 'rt-1', type: 'text', text: 'hello' }, resolve)
+      a.emit(SOCKET_EVENTS.MSG_SEND, envelope, resolve)
     })
     expect(ack.success).toBe(true)
 
     const msg = await bGot
-    expect(msg.id).toBe('rt-1')
+    expect(msg).toMatchObject(envelope)
+    expect(msg).not.toHaveProperty('text')
     expect(msg.time).toBeGreaterThan(0)
     expect(msg.sendBy).toBe('甲')
-    expect(a).toBeTruthy()
+    const receiverCrypto = createMessageCrypto(roomId)
+    await expect(receiverCrypto.decrypt(msg)).resolves.toMatchObject({ type: 'text', text: '你好，Send' })
+    await expect(receiverCrypto.decrypt({ ...msg, id: 'altered' })).rejects.toThrow()
     // 发送者无回声
     await silence(a)
 
     // 刷新语义：重连（新客户端）先拿历史，历史含 rt-1
-    const historyRes = await new Promise<Message[]>((resolve) => {
+    const historyRes = await new Promise<RoomMessage[]>((resolve) => {
       const s = ioClient(url, { transports: ['websocket'], query: { roomId, username: '丙' } }) as Client
       s.on(SOCKET_EVENTS.ROOM_JOINED, (h) => {
         resolve(h)
         s.close()
       })
     })
-    expect(historyRes.map((m) => m.id)).toContain('rt-1')
+    expect(historyRes).toEqual([msg])
   })
 
   it('跨房间隔离：其他房间收不到广播', async () => {
@@ -119,8 +125,9 @@ describe.runIf(hasRedis)('Socket.IO 实时（双真实客户端）', () => {
     clients.push(a1, a2, b1)
 
     const bSilence = silence(b1, 400)
-    const a2Got = nextEvent<Message>(a2, SOCKET_EVENTS.MSG_RECEIVE)
-    await new Promise((resolve) => a1.emit(SOCKET_EVENTS.MSG_SEND, { id: 'iso-1', type: 'text', text: '隔离' }, resolve))
+    const envelope = await createMessageCrypto(roomA).encrypt({ id: 'iso-1', type: 'text', text: '隔离' })
+    const a2Got = nextEvent<RoomMessage>(a2, SOCKET_EVENTS.MSG_RECEIVE)
+    await new Promise((resolve) => a1.emit(SOCKET_EVENTS.MSG_SEND, envelope, resolve))
     await a2Got
     await expect(bSilence).resolves.toBe('silent')
   })
@@ -136,38 +143,51 @@ describe.runIf(hasRedis)('Socket.IO 实时（双真实客户端）', () => {
     expect(evt.count).toBeGreaterThanOrEqual(2)
   })
 
-  it('坏消息 → 错误 ack；不入库', async () => {
+  it('拒绝旧客户端发送明文', async () => {
     const roomId = await createRoom(app)
     const a = await connect(url, roomId, 'x')
     clients.push(a)
     const ack = await new Promise<{ success: boolean; message?: string }>((resolve) => {
-      a.emit(SOCKET_EVENTS.MSG_SEND, { id: 'bad-1', type: 'text', text: '' }, resolve)
+      const plaintext = { id: 'bad-1', type: 'text', text: '不能以明文发送' }
+      a.emit(SOCKET_EVENTS.MSG_SEND, plaintext as unknown as EncryptedMessageInput, resolve)
     })
     expect(ack.success).toBe(false)
     expect(ack.message).toBeTruthy()
     const res = await app.inject({ method: 'GET', url: `/api/rooms/${roomId}/messages` })
-    expect(res.json().items.find((m: Message) => m.id === 'bad-1')).toBeUndefined()
+    expect(res.json().items).toEqual([])
   })
 
   it('握手校验：不存在的房间直接拒连', async () => {
     await expect(connect(url, '9999', 'ghost')).rejects.toThrow(/握手|超时无?|房间号不存在或者已过期|room/i)
   })
 
-  it('msg:send 落库后 HTTP 历史可见（同一服务）', async () => {
+  it('附件消息在 Redis 和 HTTP 历史中只包含密文，解密后保留完整预签名 URL', async () => {
     const roomId = await createRoom(app)
     const a = await connect(url, roomId, '甲')
     clients.push(a)
-    await new Promise((resolve) =>
-      a.emit(
-        SOCKET_EVENTS.MSG_SEND,
-        { id: 'http-1', type: 'file', file: { name: 'a.bin', size: 10 }, url: 'http://host/room/a.bin' },
-        resolve,
-      ),
-    )
+    const file = { name: '报告.bin', size: 10 }
+    const signed = await app.inject({
+      method: 'POST',
+      url: '/api/uploads/sign',
+      body: { roomId, fileName: file.name, size: file.size },
+    })
+    expect(signed.statusCode).toBe(200)
+    const downloadUrl: string = signed.json().downloadUrl
+    const payload = { id: 'http-1', type: 'file' as const, file, url: downloadUrl }
+    const roomCrypto = createMessageCrypto(roomId)
+    const envelope = await roomCrypto.encrypt(payload)
+    expect((await roomCrypto.encrypt(payload)).iv).not.toBe(envelope.iv)
+    await expect(new Promise((resolve) => a.emit(SOCKET_EVENTS.MSG_SEND, envelope, resolve)))
+      .resolves.toEqual({ success: true })
+
     const res = await app.inject({ method: 'GET', url: `/api/rooms/${roomId}/messages` })
-    const item = res.json().items.find((m: Message) => m.id === 'http-1')
-    expect(item.file.name).toBe('a.bin')
-    expect(item.url).toBe('http://host/room/a.bin') // 不再剥协议（绝对 URL 直存）
+    const stored = await probe!.redis.lindex(`room-${roomId}`, 0)
+    const item: RoomMessage = res.json().items[0]
+    expect(item).toMatchObject(envelope)
+    expect(JSON.parse(stored!)).toEqual(item)
+    expect(res.body).not.toContain(downloadUrl)
+    expect(res.body).not.toContain(file.name)
+    await expect(roomCrypto.decrypt(item)).resolves.toMatchObject(payload)
   })
 })
 

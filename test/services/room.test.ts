@@ -45,7 +45,7 @@ describe.runIf(hasRedis)('room service', () => {
     await service.appendMessage(roomId, { id: 'm2', type: 'file', file: { name: 'a.txt', size: 1 }, url: 'http://x/a.txt' })
     const list = await service.getMessages(roomId, 10)
     expect(list.map((m) => m.id)).toEqual(['m1', 'm2'])
-    expect(list[1]!.file?.name).toBe('a.txt')
+    expect(list[1]).toMatchObject({ file: { name: 'a.txt' } })
   })
 
   it('LTRIM 只保留最近 N 条', async () => {

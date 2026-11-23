@@ -2,25 +2,21 @@
  * 房间实时状态机（refactor/04、05 §5）：
  *  - socket 事件与 payload 类型全部来自 shared/events（协议边界，WebRTC 后续在此扩展）
  *  - 握手 query {roomId, username}；room:joined 先历史、msg:receive 增量
- *  - 乐观上屏 + ack 决定发送状态；重连历史与乐观消息按 id 合并
+ *  - 发送前加密，接收后解密；重连历史与乐观消息按 id 合并
  *  - 文件：sign(Orval) → XHR PUT 直传 MinIO → 成功才 msg:send（验收）
  */
 import { io, type Socket } from 'socket.io-client'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SOCKET_EVENTS, type SendAck, type SocketClientToServer, type SocketServerToClient } from '@/shared/events'
-import type { Message } from '@/shared/message'
+import type { Message, RoomMessage } from '@/shared/message'
 import { signUpload } from '@/app/api'
 import { putUpload } from '@/app/lib/upload-put'
 import { getUsername } from '@/app/lib/username'
 import type { ConnectionStatus, UiMessage } from './types'
 import { mergeHistory } from './merge'
+import { createMessageCrypto } from './message-crypto'
 
 type ClientSocket = Socket<SocketServerToClient, SocketClientToServer>
-
-function stripUi(msg: UiMessage): Message {
-  const { status: _s, percent: _p, error: _e, ...rest } = msg
-  return rest
-}
 
 export interface RoomSocketApi {
   status: ConnectionStatus
@@ -37,7 +33,9 @@ export function useRoomSocket(roomId: string): RoomSocketApi {
   const [messages, setMessages] = useState<UiMessage[]>([])
   const [status, setStatus] = useState<ConnectionStatus>('connecting')
   const [peerCount, setPeerCount] = useState(0)
+  const messageCrypto = useMemo(() => createMessageCrypto(roomId), [roomId])
   const socketRef = useRef<ClientSocket | null>(null)
+  const outgoingRef = useRef(Promise.resolve())
   const filesRef = useRef(new Map<string, File>())
   const messagesRef = useRef<UiMessage[]>([])
   messagesRef.current = messages
@@ -51,20 +49,37 @@ export function useRoomSocket(roomId: string): RoomSocketApi {
       query: { roomId, username: getUsername() },
     }) as ClientSocket
     socketRef.current = socket
+    let incoming = Promise.resolve()
+
+    async function decryptReceived(message: RoomMessage): Promise<Message> {
+      try {
+        return await messageCrypto.decrypt(message)
+      } catch {
+        const { id, time, sendBy } = message
+        return { id, time, sendBy, type: 'text', text: '此消息无法解密' }
+      }
+    }
 
     socket.on(SOCKET_EVENTS.ROOM_JOINED, (history) => {
-      setMessages((prev) => mergeHistory(history, prev))
       setStatus('connected')
+      incoming = incoming.then(async () => {
+        const messages = await Promise.all(history.map(decryptReceived))
+        if (socketRef.current === socket) setMessages((prev) => mergeHistory(messages, prev))
+      })
     })
     socket.on('connect', () => setStatus('connected'))
     socket.on('disconnect', () => setStatus('disconnect'))
     socket.on('connect_error', () => setStatus('connecting'))
-    socket.on(SOCKET_EVENTS.MSG_RECEIVE, (msg) => {
-      setMessages((prev) =>
-        prev.some((m) => m.id === msg.id)
-          ? prev.map((m) => (m.id === msg.id ? { ...m, ...msg, status: 'resolved' } : m))
-          : [...prev, { ...msg, status: 'resolved' }],
-      )
+    socket.on(SOCKET_EVENTS.MSG_RECEIVE, (message) => {
+      incoming = incoming.then(async () => {
+        const msg = await decryptReceived(message)
+        if (socketRef.current !== socket) return
+        setMessages((prev) =>
+          prev.some((m) => m.id === msg.id)
+            ? prev.map((m) => (m.id === msg.id ? { ...m, ...msg, status: 'resolved' } : m))
+            : [...prev, { ...msg, status: 'resolved' }],
+        )
+      })
     })
     socket.on(SOCKET_EVENTS.ROOM_PEER, (info) => setPeerCount(info.count))
 
@@ -73,7 +88,7 @@ export function useRoomSocket(roomId: string): RoomSocketApi {
       socket.close()
       socketRef.current = null
     }
-  }, [roomId])
+  }, [roomId, messageCrypto])
 
   const patch = useCallback((id: string, changes: Partial<UiMessage>) => {
     setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, ...changes } : m)))
@@ -86,11 +101,22 @@ export function useRoomSocket(roomId: string): RoomSocketApi {
         patch(msg.id, { status: 'rejected', error: '未连接' })
         return
       }
-      socket.emit(SOCKET_EVENTS.MSG_SEND, stripUi(msg), (ack: SendAck) => {
-        patch(msg.id, ack.success ? { status: 'resolved', error: undefined } : { status: 'rejected', error: ack.message })
+      outgoingRef.current = outgoingRef.current.then(async () => {
+        if (socketRef.current !== socket) return
+        try {
+          const encrypted = await messageCrypto.encrypt(msg)
+          if (socketRef.current !== socket) return
+          socket.emit(SOCKET_EVENTS.MSG_SEND, encrypted, (ack: SendAck) => {
+            patch(msg.id, ack.success ? { status: 'resolved', error: undefined } : { status: 'rejected', error: ack.message })
+          })
+        } catch (err) {
+          if (socketRef.current === socket) {
+            patch(msg.id, { status: 'rejected', error: err instanceof Error ? err.message : '消息加密失败' })
+          }
+        }
       })
     },
-    [patch],
+    [messageCrypto, patch],
   )
 
   const sendText = useCallback(

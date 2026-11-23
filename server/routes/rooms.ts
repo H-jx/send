@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
-import { roomIdSchema, messageSchema } from '../../shared/message.js'
+import { roomIdSchema, roomMessageSchema } from '../../shared/message.js'
 import { RoomGoneError } from '../services/room.js'
 import type { AppServices } from '../services/index.js'
 
@@ -12,7 +12,7 @@ export const joinRoomResponseSchema = z.object({
 })
 export const messagesResponseSchema = z.object({
   roomId: roomIdSchema,
-  items: z.array(messageSchema),
+  items: z.array(roomMessageSchema),
 })
 
 export const roomRoutes: FastifyPluginAsyncZod<{ services: AppServices }> = async (app, opts) => {

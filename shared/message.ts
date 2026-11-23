@@ -1,5 +1,5 @@
 /**
- * 消息模型：HTTP、Socket.IO 与浏览器共用的唯一来源。
+ * 消息模型：浏览器渲染明文，HTTP 和 Socket.IO 共用密文格式。
  * 对应 refactor/03 §3 与 refactor/04。
  */
 import { z } from 'zod'
@@ -16,19 +16,20 @@ export const messageFileSchema = z.object({
   size: z.number().int().min(0),
 })
 
-export const messageSchema = z
+const messageMetadata = {
+  id: z.string().min(1).max(64),
+  time: z.number().int().optional(),
+  sendBy: z.string().max(64).optional(),
+}
+
+export const messageContentSchema = z
   .object({
-    id: z.string().min(1).max(64),
     type: messageTypeSchema,
     /** type=text 必填 */
     text: z.string().min(1).max(10_000).optional(),
     /** type=file：下载地址（绝对 URL 或历史协议相对链接） */
     url: z.string().max(2000).optional(),
     file: messageFileSchema.optional(),
-    /** 服务端补全 */
-    time: z.number().int().optional(),
-    /** 服务端按握手 username 补全 */
-    sendBy: z.string().max(64).optional(),
   })
   .superRefine((m, ctx) => {
     if (m.type === 'text' && !m.text) {
@@ -39,18 +40,28 @@ export const messageSchema = z
     }
   })
 
+export const messageSchema = messageContentSchema.safeExtend(messageMetadata)
+
 export type Message = z.infer<typeof messageSchema>
 export type MessageType = z.infer<typeof messageTypeSchema>
 export type MessageFile = z.infer<typeof messageFileSchema>
 
-/**
- * 客户端上行消息 schema：与 messageSchema 相同约束
- * （time/sendBy 本就是 optional，由服务端覆写；zod4 的 refine 不可 extend 覆写键，
- *  故直接复用，见 msgSendSchema 引用处）。
- */
-export const msgSendSchema = messageSchema
+export const msgSendSchema = z.strictObject({
+  id: messageMetadata.id,
+  v: z.literal(1),
+  iv: z.base64url().length(16),
+  // 覆盖原有内容上限在最坏情况下的 JSON 转义、认证标签与 Base64URL 编码。
+  ciphertext: z.base64url().min(22).max(100_000),
+})
+export type EncryptedMessageInput = z.infer<typeof msgSendSchema>
+
+const encryptedMessageSchema = msgSendSchema.extend(messageMetadata)
+
+// 历史允许读取加密功能上线前的明文记录。
+export const roomMessageSchema = z.union([encryptedMessageSchema, messageSchema])
+export type RoomMessage = z.infer<typeof roomMessageSchema>
 
 export type HistoryResponseBody = {
   roomId: string
-  items: Message[]
+  items: RoomMessage[]
 }

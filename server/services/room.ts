@@ -11,7 +11,7 @@
  */
 import crypto from 'node:crypto'
 import type { Redis } from 'ioredis'
-import { messageSchema, type Message } from '../../shared/message.js'
+import { roomMessageSchema, type RoomMessage } from '../../shared/message.js'
 
 const ROOM_PREFIX = 'room-'
 const META_PREFIX = 'room-meta-'
@@ -50,8 +50,8 @@ export interface RoomSummary {
 export interface RoomService {
   createRoom(): Promise<RoomSummary>
   joinRoom(roomId: string): Promise<RoomSummary>
-  getMessages(roomId: string, limit: number): Promise<Message[]>
-  appendMessage(roomId: string, msg: Message): Promise<Message>
+  getMessages(roomId: string, limit: number): Promise<RoomMessage[]>
+  appendMessage(roomId: string, msg: RoomMessage): Promise<RoomMessage>
   removeRoom(roomId: string): Promise<void>
   sweepExpired(roomIds: string[]): Promise<number>
 }
@@ -113,7 +113,7 @@ export function createRoomService(opts: RoomServiceOptions): RoomService {
       console.warn(`[room] 旧房间 ${roomId} 数据不可解析，按空房间迁移`)
     }
     const valid = items
-      .map((m) => messageSchema.safeParse(m))
+      .map((m) => roomMessageSchema.safeParse(m))
       .filter((r) => r.success)
       .map((r) => JSON.stringify(r.data))
     const listKey = roomKey(roomId)
@@ -174,9 +174,9 @@ export function createRoomService(opts: RoomServiceOptions): RoomService {
           await ensureMeta(roomId)
         }
         const raw = await redis.lrange(roomKey(roomId), -limit, -1)
-        const out: Message[] = []
+        const out: RoomMessage[] = []
         for (const item of raw) {
-          const parsed = messageSchema.safeParse(safeJson(item))
+          const parsed = roomMessageSchema.safeParse(safeJson(item))
           if (parsed.success) out.push(parsed.data)
         }
         return out
@@ -184,7 +184,7 @@ export function createRoomService(opts: RoomServiceOptions): RoomService {
     },
 
     async appendMessage(roomId, msg) {
-      const final = messageSchema.parse(msg) // 服务端出口再校验一次
+      const final = roomMessageSchema.parse(msg) // 服务端出口再校验一次
       return withLock(roomId, async () => {
         if (!(await ensureMeta(roomId))) throw new RoomGoneError(roomId)
         const key = roomKey(roomId)

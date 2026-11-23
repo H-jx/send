@@ -4,7 +4,7 @@
  * 届时在本文件扩展 rtc:* 事件即可，传输层边界不变）。
  */
 import { z } from 'zod'
-import { msgSendSchema, roomIdSchema, type Message } from './message.js'
+import { roomIdSchema, type EncryptedMessageInput, type RoomMessage } from './message.js'
 
 export const SOCKET_EVENTS = {
   /** 服务端 → 新进入者：房间历史消息（握手校验房间后先同步历史） */
@@ -33,15 +33,15 @@ export type RoomPeerInfo = { count: number }
 /** 客户端 → 服务端 */
 export interface SocketClientToServer {
   [SOCKET_EVENTS.MSG_SEND]: (
-    msg: z.infer<typeof msgSendSchema>,
+    msg: EncryptedMessageInput,
     ack?: (res: SendAck) => void,
   ) => void
 }
 
 /** 服务端 → 客户端 */
 export interface SocketServerToClient {
-  [SOCKET_EVENTS.ROOM_JOINED]: (history: Message[]) => void
-  [SOCKET_EVENTS.MSG_RECEIVE]: (msg: Message) => void
+  [SOCKET_EVENTS.ROOM_JOINED]: (history: RoomMessage[]) => void
+  [SOCKET_EVENTS.MSG_RECEIVE]: (msg: RoomMessage) => void
   [SOCKET_EVENTS.ROOM_PEER]: (info: RoomPeerInfo) => void
 }
 

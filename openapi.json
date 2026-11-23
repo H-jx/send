@@ -189,64 +189,114 @@
                     "items": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 64
-                          },
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "text",
-                              "file"
-                            ]
-                          },
-                          "text": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 10000
-                          },
-                          "url": {
-                            "type": "string",
-                            "maxLength": 2000
-                          },
-                          "file": {
+                        "anyOf": [
+                          {
                             "type": "object",
                             "properties": {
-                              "name": {
+                              "id": {
                                 "type": "string",
                                 "minLength": 1,
-                                "maxLength": 200
+                                "maxLength": 64
                               },
-                              "size": {
+                              "v": {
+                                "type": "number",
+                                "enum": [
+                                  1
+                                ]
+                              },
+                              "iv": {
+                                "type": "string",
+                                "minLength": 16,
+                                "maxLength": 16,
+                                "format": "base64url",
+                                "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
+                              },
+                              "ciphertext": {
+                                "type": "string",
+                                "minLength": 22,
+                                "maxLength": 100000,
+                                "format": "base64url",
+                                "pattern": "^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$"
+                              },
+                              "time": {
                                 "type": "integer",
-                                "minimum": 0,
+                                "minimum": -9007199254740991,
                                 "maximum": 9007199254740991
+                              },
+                              "sendBy": {
+                                "type": "string",
+                                "maxLength": 64
                               }
                             },
                             "required": [
-                              "name",
-                              "size"
+                              "id",
+                              "v",
+                              "iv",
+                              "ciphertext"
                             ],
                             "additionalProperties": false
                           },
-                          "time": {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
-                          },
-                          "sendBy": {
-                            "type": "string",
-                            "maxLength": 64
+                          {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "text",
+                                  "file"
+                                ]
+                              },
+                              "text": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 10000
+                              },
+                              "url": {
+                                "type": "string",
+                                "maxLength": 2000
+                              },
+                              "file": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 200
+                                  },
+                                  "size": {
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "maximum": 9007199254740991
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "size"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "id": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 64
+                              },
+                              "time": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "sendBy": {
+                                "type": "string",
+                                "maxLength": 64
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "id"
+                            ],
+                            "additionalProperties": false
                           }
-                        },
-                        "required": [
-                          "id",
-                          "type"
-                        ],
-                        "additionalProperties": false
+                        ]
                       }
                     }
                   },

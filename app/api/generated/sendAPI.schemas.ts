@@ -50,15 +50,42 @@ export type GetApiRoomsRoomIdMessagesParams = {
   limit?: number;
 };
 
-export type GetApiRoomsRoomIdMessages200ItemsItemType = typeof GetApiRoomsRoomIdMessages200ItemsItemType[keyof typeof GetApiRoomsRoomIdMessages200ItemsItemType];
-
-
-export const GetApiRoomsRoomIdMessages200ItemsItemType = {
-  text: 'text',
-  file: 'file',
-} as const;
-
-export type GetApiRoomsRoomIdMessages200ItemsItemFile = {
+export type GetApiRoomsRoomIdMessages200ItemsItem = {
+  /**
+     * @minLength 1
+     * @maxLength 64
+     */
+  id: string;
+  v: 1;
+  /**
+     * @minLength 16
+     * @maxLength 16
+     * @pattern ^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$
+     */
+  iv: string;
+  /**
+     * @minLength 22
+     * @maxLength 100000
+     * @pattern ^(?:[A-Za-z0-9_-]{4})*(?:[A-Za-z0-9_-]{2,3})?$
+     */
+  ciphertext: string;
+  /**
+     * @minimum -9007199254740991
+     * @maximum 9007199254740991
+     */
+  time?: number;
+  /** @maxLength 64 */
+  sendBy?: string;
+} | {
+  type: 'text' | 'file';
+  /**
+     * @minLength 1
+     * @maxLength 10000
+     */
+  text?: string;
+  /** @maxLength 2000 */
+  url?: string;
+  file?: {
   /**
      * @minLength 1
      * @maxLength 200
@@ -70,22 +97,11 @@ export type GetApiRoomsRoomIdMessages200ItemsItemFile = {
      */
   size: number;
 };
-
-export type GetApiRoomsRoomIdMessages200ItemsItem = {
   /**
      * @minLength 1
      * @maxLength 64
      */
   id: string;
-  type: GetApiRoomsRoomIdMessages200ItemsItemType;
-  /**
-     * @minLength 1
-     * @maxLength 10000
-     */
-  text?: string;
-  /** @maxLength 2000 */
-  url?: string;
-  file?: GetApiRoomsRoomIdMessages200ItemsItemFile;
   /**
      * @minimum -9007199254740991
      * @maximum 9007199254740991
